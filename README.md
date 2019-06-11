@@ -1,4 +1,4 @@
-# Code for Practical Multivariate Analysis - 6ed
+# Code for Practical Multivariate Analysis, 6 ed.
 
 This repository contains code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
 
@@ -10,6 +10,15 @@ This repository only contains the necessary code to reproduce a table, plot or a
 ## todo
 * Add chapter & language status table
 * Add license
+
+
+| Chapter   | Title                              | R | SAS | SPSS | Stata |
+|:---------:|:-----------------------------------|---|-----|------|-------|
+|    1      | What is Multivariate analysis      | :x:   |     |      |       |
+|    2      | Characterizing data for analysis      |   |     |      |       |
+|    3      |       |   |     |      |       |
+
+
 
 
 ---
