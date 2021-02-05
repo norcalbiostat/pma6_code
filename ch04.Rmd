@@ -16,7 +16,7 @@ library(scales); library(dplyr); library(gridExtra);
 library(gridBase); library(grid); library(ggplot2)
 library(xtable); library(magrittr); library(knitr)
 library(vcd)
-opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE)
 ```
 
 # Helper functions
@@ -44,7 +44,7 @@ biv.n.col.p <- function(df, row.var, col.var) {
   
 # Load & prepare data
 ```{r}
-data.path <- "../data/"
+data.path <- "data/"
 
 raw <- read.delim(paste0(data.path,"Parhiv.txt"), sep="\t", header=TRUE)
 

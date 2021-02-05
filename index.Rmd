@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Suppl. Material for PMA6"
 output:
   html_document:
     toc: no
@@ -7,7 +7,7 @@ output:
 
 <br> 
 
-## This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
+### This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
 
 <br> 
 

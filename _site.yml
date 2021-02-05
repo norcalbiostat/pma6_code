@@ -6,19 +6,19 @@ navbar:
   - text: "Part I: Preparation for Analysis"
     menu:
     - text: "Ch 04: Data visualization"
-      href: code/ch04.html
+      href: ch04.html
   - text: "Part II: Regression Analysis"
     menu:
     - text: "Ch 07: Simple regression and correlation"
-      href: code/ch07.html
+      href: ch07.html
     - text: "Ch 08: Multiple regression and correlation"
-      href: code/ch08.html
+      href: ch08.html
     - text: "Ch 09: Variable selection in regression"
-      href: code/ch09.html
+      href: ch09.html
     - text: "Ch 14: Principal components analysis"
-      href: code/ch14.html
+      href: ch14.html
     - text: "Ch 16: Cluster analysis"
-      href: code/ch16.html
+      href: ch16.html
   right: 
   - text: "Contact"
     icon: fa-envelope
