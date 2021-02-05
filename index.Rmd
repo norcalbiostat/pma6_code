@@ -43,10 +43,10 @@ data.frame(data=data, cdbk=cdbk) %>%
 ### Code Contribution status as of:  `r format(Sys.Date(), "%b-%d-%Y")`
 
 
-| Chapter   | Title                              | R | SAS | SPSS | Stata |
-|:---------:|:-----------------------------------|---|-----|------|-------|
-|    3      | Preparing for data analysis      |    |     |      |       |
-|    4      | [Data visualization](code/ch04.html)      |   |     |      |       |
+| Chapter   | Title                               | R | SAS | SPSS | Stata |
+|:---------:|:------------------------------------|---|-----|------|-------|
+|    3      | Preparing for data analysis         |    |     |      |       |
+|    4      | [Data visualization](code/ch04.html)|`r emo::ji("check")`   |     |      |       |
 |    5      | Data screening and transformations      |   |     |      |       |
 |    7      | Simple regression and correlation      |   |     |      |       |
 |    8      | Multiple regression and correlation      |   |     |      |       |
