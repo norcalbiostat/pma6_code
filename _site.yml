@@ -1,0 +1,35 @@
+name: "PMA6"
+output_dir: "."
+navbar:
+  title: "Suppl. Material for PMA6"
+  left:
+  - text: "Part I: Preparation for Analysis"
+    menu:
+    - text: "Ch 04: Data visualization"
+      href: code/ch04.html
+  - text: "Part II: Regression Analysis"
+    menu:
+    - text: "Ch 07: Simple regression and correlation"
+      href: code/ch07.html
+    - text: "Ch 08: Multiple regression and correlation"
+      href: code/ch08.html
+    - text: "Ch 09: Variable selection in regression"
+      href: code/ch09.html
+    - text: "Ch 14: Principal components analysis"
+      href: code/ch14.html
+    - text: "Ch 16: Cluster analysis"
+      href: code/ch16.html
+  right: 
+  - text: "Contact"
+    icon: fa-envelope
+    href: "mailto:rdonatello@csuchico.edu"
+  - text: "Contribute"
+    icon: fa-github
+    href: "https://github.com/norcalbiostat/pma6_code"
+  
+output:
+  html_document:
+    highlight: tango
+    theme: lumen
+  
+  

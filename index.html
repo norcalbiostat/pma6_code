@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>index.utf8</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Suppl. Material for PMA6</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Part I: Preparation for Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="code/ch04.html">Ch 04: Data visualization</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Part II: Regression Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="code/ch07.html">Ch 07: Simple regression and correlation</a>
+    </li>
+    <li>
+      <a href="code/ch08.html">Ch 08: Multiple regression and correlation</a>
+    </li>
+    <li>
+      <a href="code/ch09.html">Ch 09: Variable selection in regression</a>
+    </li>
+    <li>
+      <a href="code/ch14.html">Ch 14: Principal components analysis</a>
+    </li>
+    <li>
+      <a href="code/ch16.html">Ch 16: Cluster analysis</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="mailto:rdonatello@csuchico.edu">
+    <span class="fa fa-envelope"></span>
+     
+    Contact
+  </a>
+</li>
+<li>
+  <a href="https://github.com/norcalbiostat/pma6_code">
+    <span class="fa fa-github"></span>
+     
+    Contribute
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<p><br></p>
+<div id="this-site-contains-data-and-selected-code-for-figures-and-examples-found-in-the-6th-edition-of-practical-multivariate-analysis-by-afifi-may-donatello-and-clark." class="section level2">
+<h2>This site contains data, and selected code for figures and examples found in the 6th edition of <a href="http://www.crcpress.com/product/isbn/9781138702226">Practical Multivariate Analysis</a> by Afifi, May, Donatello and Clark.</h2>
+<p><br></p>
+<blockquote>
+<p>Want to contribute code? Email us or go to our github repo using the links in the top right.</p>
+</blockquote>
+<hr />
+<div id="texbook-data-and-codebooks" class="section level3">
+<h3>Texbook data and codebooks</h3>
+<table class="table table-striped table-hover table-condensed table-responsive table-bordered" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+Topic
+</th>
+<th style="text-align:center;">
+Data
+</th>
+<th style="text-align:center;">
+Codebook
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Chemical
+</td>
+<td style="text-align:center;">
+<a href="data/Chemical.txt">Chemical.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/ChemicalCodebook.txt">ChemicalCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Cluster
+</td>
+<td style="text-align:center;">
+<a href="data/Cluster.txt">Cluster.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/ClusterCodebook.txt">ClusterCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Depress
+</td>
+<td style="text-align:center;">
+<a href="data/Depress.txt">Depress.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/DepressCodebook.txt">DepressCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Earthq
+</td>
+<td style="text-align:center;">
+<a href="data/Earthq.txt">Earthq.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/EarthqCodebook.txt">EarthqCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Lung
+</td>
+<td style="text-align:center;">
+<a href="data/Lung.txt">Lung.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/LungCodebook.txt">LungCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Mice
+</td>
+<td style="text-align:center;">
+<a href="data/Mice.txt">Mice.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/MiceCodebook.txt">MiceCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Parhiv
+</td>
+<td style="text-align:center;">
+<a href="data/Parhiv.txt">Parhiv.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/ParhivCodebook.txt">ParhivCodebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+School23
+</td>
+<td style="text-align:center;">
+<a href="data/School23.txt">School23.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/School23Codebook.txt">School23Codebook.txt</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Surv
+</td>
+<td style="text-align:center;">
+<a href="data/Surv.txt">Surv.txt</a>
+</td>
+<td style="text-align:center;">
+<a href="data/SurvCodebook.txt">SurvCodebook.txt</a>
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<hr />
+</div>
+<div id="code-contribution-status-as-of-feb-05-2021" class="section level3">
+<h3>Code Contribution status as of: Feb-05-2021</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="center">Chapter</th>
+<th align="left">Title</th>
+<th>R</th>
+<th>SAS</th>
+<th>SPSS</th>
+<th>Stata</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">3</td>
+<td align="left">Preparing for data analysis</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="left"><a href="code/ch04.html">Data visualization</a></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">5</td>
+<td align="left">Data screening and transformations</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">7</td>
+<td align="left">Simple regression and correlation</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">8</td>
+<td align="left">Multiple regression and correlation</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="left">Variable selection in regression</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">10</td>
+<td align="left">Special regression topics</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">11</td>
+<td align="left">Discriminant analysis</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">12</td>
+<td align="left">Logistic regression</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">13</td>
+<td align="left">Regression analysis with survival data</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">14</td>
+<td align="left">Principal components analysis</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">15</td>
+<td align="left">Factor analysis</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">16</td>
+<td align="left">Cluster analysis</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td align="center">17</td>
+<td align="left">Log-linear analysis</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td align="center">18</td>
+<td align="left">Correlated outcomes regression</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

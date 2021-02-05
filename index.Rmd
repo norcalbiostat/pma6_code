@@ -1,0 +1,64 @@
+---
+title: ""
+output:
+  html_document:
+    toc: no
+---
+
+<br> 
+
+## This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
+
+<br> 
+
+> Want to contribute code? Email us or go to our github repo using the links in the top right. 
+
+
+----
+
+### Texbook data and codebooks
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(dplyr); library(knitr); library(kableExtra)
+options(knitr.kable.NA = '')
+
+all.files <- list.files("data/")
+cdbk <- all.files[grepl("Codebook", all.files)]
+data <- gsub("Codebook", "", cdbk)
+
+data.frame(data=data, cdbk=cdbk) %>% 
+        mutate(Data = sprintf("[%s](data/%s)", data, data), 
+               Codebook = sprintf("[%s](data/%s)", cdbk, cdbk), 
+               Topic = gsub(".txt", "", data)) %>% 
+  select(Topic, Data, Codebook) %>% 
+    kable(format="html", align='c') %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive" ,"bordered"), 
+                  full_width=TRUE,  position = "center")
+```
+
+<br>
+
+----
+
+### Code Contribution status as of:  `r format(Sys.Date(), "%b-%d-%Y")`
+
+
+| Chapter   | Title                              | R | SAS | SPSS | Stata |
+|:---------:|:-----------------------------------|---|-----|------|-------|
+|    3      | Preparing for data analysis      |    |     |      |       |
+|    4      | [Data visualization](code/ch04.html)      |   |     |      |       |
+|    5      | Data screening and transformations      |   |     |      |       |
+|    7      | Simple regression and correlation      |   |     |      |       |
+|    8      | Multiple regression and correlation      |   |     |      |       |
+|    9      | Variable selection in regression      |   |     |      |       |
+|   10      | Special regression topics      |   |     |      |       |
+|   11      | Discriminant analysis      |   |     |      |       |
+|   12      | Logistic regression      |   |     |      |       |
+|   13      | Regression analysis with survival data      |   |     |      |       |
+|   14      | Principal components analysis      |   |     |      |       |
+|   15      | Factor analysis      |   |     |      |       |
+|   16      | Cluster analysis      |   |     |      |       |
+|   17      | Log-linear analysis      |   |     |      |       |
+|   18      | Correlated outcomes regression      |   |     |      |       |
+
+
