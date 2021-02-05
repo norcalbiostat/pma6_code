@@ -7,15 +7,6 @@ This repository only contains the necessary code to reproduce a table, plot or a
 (Website for the 5th edition [can be found at this link](https://stats.idre.ucla.edu/other/examples/pma5/)).
 
 
-## todo
-* Add chapter & language status table
-
-
-
-| Chapter   | Title                              | R | SAS | SPSS | Stata |
-|:---------:|:-----------------------------------|---|-----|------|-------|
-|    1      | What is Multivariate analysis      | :x:   |     |      |       |
-|    2      | Characterizing data for analysis      |   |     |      |       |
-|    3      |       |   |     |      |       |
-
+# User site
+A user-friendly site for this material can be found at https://norcalbiostat.github.io/pma6_code/ 
 
