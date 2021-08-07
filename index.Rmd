@@ -6,12 +6,11 @@ output:
 ---
 
 <br> 
-
-### This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
+##### This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
 
 <br> 
 
-> Want to contribute code? Email us or go to our github repo using the links in the top right. 
+_Want to contribute code? Email us or go to our github repo using the links in the top right._ 
 
 
 
@@ -21,7 +20,7 @@ output:
 library(dplyr); library(knitr); library(kableExtra)
 options(knitr.kable.NA = '')
 
-all.files <- list.files("data/")
+all.files <- list.files("data6e/")
 cdbk <- all.files[grepl("Codebook", all.files)]
 data <- gsub("Codebook", "", cdbk)
 

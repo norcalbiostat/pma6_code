@@ -1,0 +1,13 @@
+proc import datafile="/folders/myfolders/data/Cluster.txt" 
+	out=chem 
+	dbms=tab;
+run;
+
+proc standard data=chem out=Stand mean=0 std=1;
+	var ror5 de eps5 npm1 payoutr1 pe salesgr5;
+run;
+
+proc fastclus data=Stand out=Clust
+	maxclusters=3 maxiter=100 ;
+	var ror5 de eps5 npm1 payoutr1 pe salesgr5;
+run;

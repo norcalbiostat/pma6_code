@@ -1,0 +1,543 @@
+\documentclass{book}
+
+\usepackage{enumitem, etoolbox}
+\usepackage[figuresright]{rotating}
+\usepackage{graphicx, subcaption}
+
+\newcommand{\R}[1]{\texttt{#1}}
+\newcommand{\blue}[1]{\textbf{\textcolor{blue}{#1}}}
+\newcommand{\red}[1]{\textbf{\textcolor{red}{#1}}}
+
+<<echo=FALSE, warning=FALSE, message=FALSE>>=
+library(scales); library(dplyr); library(gridExtra); 
+library(gridBase); library(grid); library(ggplot2)
+library(xtable); library(waffle)
+
+
+opts_chunk$set(warning=FALSE, message=FALSE, echo=FALSE, eval=TRUE,
+               fig.height=4, fig.width=6, fig.align='center')
+options(xtable.comment = FALSE, include.rownames=FALSE)
+
+source("C:/Dropbox/helper functions.R")
+
+raw <- read.delim("../../../data6e/Parhiv.txt", sep="\t", header=TRUE)
+parhiv <- raw %>% mutate(JOBMO = factor(JOBMO, labels=c("Employed", "Unemployed", "Retired/Disabled")), 
+                         EDUMO = factor(EDUMO, labels=c("Less than High School", "High School Graduate/GED", "Post Secondary")),
+                         bsi_overall =rowMeans(raw[,59:111]), log_bsi_overall = log(bsi_overall+.01), 
+                         parent_bonding = (PB01+(4-PB02)+(4-PB04)+PB05+PB06+
+                                             PB11+PB12+(4-PB14)+(4-PB16)+PB17+(4-PB18)+(4-PB24))/12)
+
+raw.d <- read.delim("C:/GitHub/Teaching/data/Depress_041616.txt", header=TRUE,sep="\t")
+depress <- raw.d %>% mutate(gender = factor(sex, labels=c("Male", "Female")))
+
+raw.l <- read.delim("../../../data6e/Lung_020716.txt", sep="\t", header=TRUE)
+
+mice <- read.delim("../../../data6e/Mice.txt", sep="\t", header=TRUE)
+@
+
+
+\begin{document}
+
+\tableofcontents
+
+\chapter{Data Visualization} \label{ch:dataviz}
+
+\section{Introduction}
+
+Visualizing data is one of the most important thing we can do to become familiar with the data. There are often features and patterns in the data that cannot be uncovered with summary statistics alone. As the old adage goes: ``a picture is worth a thousands words". Good data visualizations often convey much more information than a block of text or a table full of numbers. This chapter introduces a series of plot types for both categorical and continuous data. We start with visualizations for a single variable only (univariate), then combinations of two variables (bivariate), and lastly a few examples and discussion of methods for visualizing relationships between more than two variables (multivariate).  Additional graphics designed for a specific analysis setting are introduced as needed in other chapters of this book. \\
+
+This chapter uses several data sets introduced in Chapter \ref{ch:intro} and described in \ref{appendix:A}. 
+Specifically, we use the Parental HIV, and the Depression data sets to demonstrate different visualization techniques. 
+
+All graphics in this chapter are made using R, with section \ref{sec:dataviz_programs} containing a discussion of graphical capabilities to create these graphs in other computer software programs. Additionally links and references to external learning resources are provided at the end of the chapter. \\
+
+
+\noindent There are three levels of visualizations that can be created, with examples shown in Figure \ref{fig:demo3} a, b, and c.
+\begin{itemize}
+  \item \textbf{For your eyes only:} Made by the analyst, for the analyst. These plots are quick and easy to create, using the default options without any annotation or context. These graphs are meant to be looked at once or twice for exploratory analysis in order to better understand the data. 
+  \item \textbf{For an internal report:} Some chosen plots are then cleaned up to be shared with others, for example in an weekly team meeting or to be sent to co-investigators participating in the study. These need to be capable of standing on their own, but can be slightly less than perfect. Axes labels, titles, colors, annotations and other captions are provided as needed to put the graph in context. 
+  \item \textbf{For publication or external report:} These are meant to be shared with other stakeholders such as the public, your client, or administration. Very few plots make it this far. These plots should have all the "bells and whistles" as they appear in formal reports, and are often saved to an external file of a specific size or file type, with high resolution. For publication in most printed journals and books figures typically need to be in black and white (possibly grayscale). 
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+<<fig.height=8, out.height='2in'>>=
+hist(parhiv$bsi_overall)
+@
+        \caption{For your eyes only}
+        \label{fig:demo3_a}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.3\textwidth}
+<<fig.height=8, out.height='2in'>>=
+ggplot(parhiv, aes(x=bsi_overall)) + geom_histogram() +theme_gray(base_size=16)
+@
+        \caption{An internal report}
+        \label{fig:demo3_b}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+<<fig.height=8, out.height='2in'>>=
+ggplot(parhiv, aes(x=bsi_overall)) + geom_histogram() + theme_minimal(base_size = 16) + 
+          xlab("BSI score") + ylab("Frequency") + ggtitle("Brief Symptom Inventory Score")
+@
+        \caption{Publication}
+        \label{fig:demo3_c}
+    \end{subfigure}
+    \caption{Three levels of graphic quality and completeness}\label{fig:demo3}
+\end{figure}
+
+
+\section{Univariate Data}
+This section covers how to visualize a single variable or characteristic. We start with plots for categorical data, then cover plots for continuous data. Visualization is one of the best methods to identify univariate outliers, skewness, low frequencies in certain categories and/or other oddities in the distribution of the data. 
+
+\subsection{Categorical data}
+Categorical (nominal or ordinal) data is summarized by reporting the count, or frequency, of records in the data set that take on the value for each category of the variable of interest (See Section \ref{ch:datatypes_sec:steven} for a review of data type classifications.) Common visualizations (plot types) for the counts of categorical data include tables, dot plots, pie charts and waffle charts. The subsections below discuss and demonstrate each of these plot types. 
+
+
+\subsubsection{Tables} 
+Tables are the most common way to organize and display summary statistics of a categorical variable using just numbers. 
+It is typically the case that the table shows both the frequency (N), and the percent for each category. 
+
+<<results="asis">>=
+ptab.cut <- univ.n.pct(parhiv, "EDUMO")
+names(ptab.cut) <- c("Education Level", "N", "%")
+print(xtable(ptab.cut, caption="Education level among mothers with HIV", label="tab:univ_edumo"), include.rownames=FALSE)
+@
+Table \ref{tab:univ_edumo} shows that about a quarter (47, 25.7\%) of mothers in the Parental HIV data set have post-secondary school education level. 
+
+
+\subsubsection{Bar Charts}
+A barchart or barplot takes these frequencies, and draws bars for each category (shown along the X-axis) where the height of the bars is determined by the frequencies seen in the table (Figure \ref{fig:univ_bar_n}). A reasonable modification is to put the percentages on the y axis (Figure \ref{fig:univ_bar_pct}). 
+
+<<univ_bar_n, fig.cap="A bar chart with frequencies displayed">>=
+ggplot(filter(parhiv, !is.na(EDUMO)), aes(x=EDUMO)) + theme_bw() + 
+    geom_bar(aes(y = ..count..)) + ggtitle("Frequency of educational level") + xlab("Highest educational level attained") +
+    geom_text(aes(y=..count.. + 5, label=..count..), stat='count', size = 5)
+@
+
+<<univ_bar_pct, fig.cap="A bar chart with percentages on the y-axis">>=
+ptab.ctp <- univ.n.p(parhiv, "EDUMO", dig=3)
+
+ggplot(ptab.ctp, aes(x=EDUMO)) + 
+    geom_bar(aes(y=pct), stat="identity") + xlab("Highest educational level attained") + 
+    ggtitle("Percent of mothers with each educational level") + theme_bw() + 
+    scale_y_continuous(labels=percent, limits=c(0,1)) + ylab("") + 
+    geom_text(aes(y=pct + .03, label=paste0(pct*100, "%")), size = 5)
+@
+
+The ordering of categories is important for readability. Nearly all statistical software packages will set the automatic factor ordering to alphabetical, or according to the numerical value that is assigned to each category. If the data is ordinal, tables and plots should read left to right along with that ordering, such as the educational level example above. 
+
+\subsubsection{Cleveland Dot Plot}
+Bars use a lot of ink, and the width of the bar is typically meaningless. Cleveland dot plots \red{cite Cleveland} provides an alternative method to display the frequencies using less ink and space than bar charts (Figure \ref{fig:univ_dotplot}). A dot plot is especially helpful when there are a large number of categories to visualize. We use marital status as an example. Because it is a nominal variable (in contrast to the previous ordinal variable examples), these summary data are best displayed in descending order of frequency.
+
+<<univ_dotplot, fig.cap="A Cleveland dot plot of marital status">>=
+ptab.empl <- univ.n.pct(depress, "marital")
+ggplot(ptab.empl, aes(x=n, y=reorder(marital, n))) +  
+  geom_point(size = 3) + xlab("Frequency") + 
+  theme_bw() + ylab("Marital Status") + ggtitle("Frequency of marital status")+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_line(color='grey60', linetype='dashed'))
+@
+
+
+The standard dot plot depicts the value of each record as a separate dot. Cleveland dot plots differ from the standard dot plot because they plot summary data, not raw data. However, after summarizing the data we are effectively putting a dot for each data point, it's just that there is only one data point (the frequency) per category now. \\
+
+\subsubsection{Pie Charts}
+Each wedge of a pie chart (Figure \ref{fig:univ_pie}) contains an internal angle equal to the relative proportion of records in that category.  However, human eyes can't distinguish between angles that are close in size as well as our eyes can distinguish between heights of bars (or lines or dots). A necessary component to make any pie chart interpretable is having labels with names and percentages for each wedge. 
+
+<<univ_pie, fig.cap="A fully labeled pie chart of marital status. Note that percentages may not always add up to 100\\% due to rounding.">>=
+dc <- table(depress$marital)
+pie(dc, labels = paste0(names(dc), ' (', round(prop.table(dc)*100,1), "%)"), 
+    col = c("#f7f7f7","#cccccc", "#969696", "#636363", "#252525"))
+@
+
+\subsubsection{Waffle Charts}
+Waffle charts offer another way to convey the information about relative frequencies for each level of a categorical variable. Figure \ref{fig:univ_waffle} displays a grid of appropriately shaded squares, where each square represents an approximate number of records in that category.
+
+<<univ_waffle, fig.cap="A waffle chart of marital status for individuals in the Depression data set.">>=
+waffle(dc/10, rows=3, size=0.5, 
+      title="Marital Status", colors= c("#f7f7f7","#cccccc", "#969696", "#636363", "#252525"),
+      xlab = expression('1 square' %~~%  '10 participants'))
+@
+
+\subsection{Continuous data}
+
+Continuous data by definition can take on infinite possible values, so the above plots that display frequencies of records within a finite number categories do not apply here unless the continuous data are categorized into distinct groups (e.g. income brackets). To visualize continuous data, we need to display the actual value or the distribution of the data points directly. Common plot types include: stem-leaf plots, histogram, density plots, boxplots, violin plots, and qqplots. So, what do these plots depict and are they generated? 
+
+\subsubsection{Stem-leaf plots}
+
+The stem-leaf plot \red{cite tukey} demonstrates how numbers placed on a line can describe the shape of the distribution of observed values  and provide a listing of all individual observations in the same plot. Since this type of graphic includes each individual data point, the usefulness and readability diminishes as the number of data points increases. Figure \ref{fig:univ_stem} displays the values of age for individuals in the \R{depression} data set. 
+
+<<univ_stem, fig.cap = "A stem-leaf plot of the individual ages in the depression data set.">>=
+par(mar=c(0,0,0,0), oma=c(0,0,0,0))
+plot(c(0,1.3), c(0,1), type="n", axes=FALSE, main="", ylab="", xlab="")
+#tmp <- capture.output(stem(sort(depress$age)[(NROW(depress)-20):NROW(depress)]))
+tmp <- capture.output(stem(sort(depress$age)))
+tmp <- tmp[4:length(tmp)]
+text(-.1,1, paste(tmp, collapse='\n'), adj=c(0,1), family='mono', cex=1)
+@
+
+Since stem-leaf plots display the value of every observation in the data set, the data values can be read directly. The first row displays data from 15 to 19 years of age, or, the second half of the 10's place. There are 5 18 year olds and 5 19 year olds in the data set. From this plot one can get an idea of how the data are distributed and know the actual values (of ages in this example). The second row displays data on ages between 20 and 24, or, the first half of the 20's. The third row displays data on ages between 25 and 29, or, the second half of the 20's, and so forth. 
+
+Often we are not interested in the individual values of each data point, rather we want to examine the distribution of the data or summary measures of the distribution. Example questions might be: where is the majority of the data? Does the distribution look symmetric around some central point? Around what values do the bulk of the data lie? For example, the distribution of ages of individuals in the depression data set ranges from 18 to 89, is slightly skewed right, unimodal, with a mean around 45.
+
+\subsubsection{Histograms}
+Rather than showing the value of each observation, we often prefer to think of the value as belonging to a \emph{bin}, or an interval. The heights of the bars in a histogram display the frequency of values that fall into those bins. For example if we grouped the ages of individuals in the \R{depression} data set into 10 year age bins, the frequency table looks like this: 
+
+<<results="asis">>=
+print(xtable(t(table(cut(depress$age, seq(15,95, by=10))))), include.rownames=FALSE)
+@
+
+In this table, the notation (15,25] indicates that this bin includes values that are between 15 and 25, including 25 but excluding 15, and so forth.
+
+To create a histogram, the values of a continuous variable are plotted on the x-axis, with the heights of the bars for each bin equal to the frequency of data within that bin (Figure \ref{fig:univ_hist}). The main difference between a histogram and a barchart is that barcharts plot a categorical variable on the x-axis, so the vertical bars are separated. The x-axis of a histogram is continuous, so the bars touch each other, and thus there is no gap between bins because the bins represent directly adjacent categories. 
+
+<<univ_hist, fig.cap="A histogram displaying the distribution of ages in the depression data set.">>=
+ggplot(depress, aes(x=age)) + 
+  geom_histogram(colour="black", fill="grey80", binwidth=10) +  
+  ggtitle("Distribution of ages") + theme_minimal()
+@
+
+The choice of the size of each bins can highlight or hide some features in the data. If there is no scientifically motivated or otherwise prespecified bin size, we might start with the default value for the chosen statistical software package, as we did in Figure \ref{fig:univ_hist_defaultbins}, and then adjust as necessary. Figure \ref{fig:univ_hist_defaultbins} displays the same data on ages in the \R{depression} data set using the default value of range/30 chosen by the \R{ggplot2} package in \R{R}. For this example the range of ages is 18 to 89, thus the binwidth is $\frac{(89-18)}{30}=2.4$. This choice of bin width more clearly shows the most frequent age at around 23, unlike Figure \ref{fig:univ_hist} where it appears to be over 25. In this example the most frequently reported age is 23, so using the default bin size was the correct choice. 
+
+<<univ_hist_defaultbins, fig.cap = "A histogram of ages using a bin width of range/30.">>=
+ggplot(depress, aes(x=age)) + 
+  geom_histogram(colour="black", fill="grey80") + 
+  ggtitle("Distribution of ages") + theme_minimal()
+@
+
+\subsubsection{Kernel density plots}
+
+Instead of plotting bars for each bin, we can sometimes get a better (or different) idea of the true shape of the distribution by creating a kernel density plot. The kernel density is a function, $f(x)$ that is generated from the data itself, similar to a histogram. Density plots differ from histograms in that this function is a smooth continuous function, not a stepwise discrete function that creates bars with flat tops. 
+
+Figure \ref{fig:univ_density} shows that the density line smooths out the multitude of peaks and valleys in the histogram, providing a better idea of the general shape or trend of the data. 
+
+<<univ_density, fig.cap="Density plot for the distribution of ages in the Depression data set.">>=
+ggplot(depress, aes(x=age)) + 
+  geom_histogram(aes(y=..density..), colour="black", fill="grey80") + 
+  geom_density(colour="black", lwd=1.1) + xlim(range(depress$age)) + 
+  ggtitle("Distribution of ages") + theme_minimal()
+@
+
+Notice that the y-axis on a density plot is no longer the frequency or count, but the value of the kernel density, which can be thought of as the relative frequency. While the density curve in Figure \ref{fig:univ_density} is overlaid on top of the histogram with the smaller bin width, the first peak of the density plot is around 25, which is more representative of Figure \ref{fig:univ_hist} which uses the wider bin size. This highlights the importance of looking at multiple types of graphics to fully understand the distribution of the data. 
+
+\subsubsection{Boxplots and Violin plots}
+Boxplots (also called box-whisker plots) display the five number summary (Min, $Q(0.25)$, Median, $Q(0.75)$, Max) in graphical format. The data are split into equal sized quarters, i.e., same number of data points are in each of the four sections of a boxplot (Figure \ref{fig:univ_boxplot}). 
+
+<<univ_boxplot, fig.height=2, fig.cap="Boxplot for the distribution of ages in the depression data set">>=
+txt <- boxplot(depress$age, plot=FALSE)$stats
+data.labels <- data.frame(value=as.vector(txt), lab=as.character(txt))
+labels <- data.frame(value=as.vector(txt), lab=c("Min", "Q1", "Median", "Q3", "Max"))
+
+ggplot(depress, aes(y=age, x=1)) + 
+  geom_boxplot(width=.3) + ylab("Age") + xlab("") + 
+  scale_x_continuous(limits=c(0.75,1.5)) + 
+  theme_minimal() + coord_flip() + 
+  theme(axis.ticks = element_blank(), axis.text.y = element_blank()) + 
+  geom_text(data=data.labels,aes(x=1.25,y=value,label=lab),angle=0, size=3) + 
+  geom_text(data=labels,aes(x=1.4,y=value,label=lab),angle=0, size=3)
+@
+
+The box outlines the middle 50\%, or the interquartile-range ($IQR = Q(0.75)-Q(0.25)$) of the data, and the horizontal lines (whiskers) extend from the 1st quartile ($Q(0.25)$) down to the minimum value, and upwards from the third quartile $Q(0.75)$ to the maximum value. This means that in Figure \ref{fig:univ_boxplot}, the same number of individuals depression data set are between the 10 year span of ages between 18 and 28, as there are between the 30 year span of ages between 59 and 89. 
+
+
+<<univ_boxplot_modified, fig.height=2, fig.cap="Modified boxplot for the distribution of CESD from the depression data set. Dots represent data points outside the upper fence.">>=
+txt <- boxplot(depress$cesd, plot=FALSE)$stats
+data.labels <- data.frame(value=as.vector(txt), lab=as.character(txt))
+labels <- data.frame(value=as.vector(txt), lab=c("Min", "Q1", "Median", "Q3", "Largest value within fence"))
+
+
+ggplot(depress, aes(y=cesd, x=1)) + 
+  geom_boxplot(width=.3) + ylab("CESD") + xlab("") + 
+  scale_x_continuous(limits=c(0.75,1.5)) + 
+  theme_minimal() + coord_flip() + 
+  theme(axis.ticks = element_blank(), axis.text.y = element_blank()) + 
+  geom_text(data=data.labels,aes(x=1.25,y=value,label=lab),angle=0, size=3) + 
+  geom_text(data=labels,aes(x=1.4,y=value,label=lab),angle=0, size=3)
+@
+
+
+Some statistical packages plot the \emph{modified boxplot} by default. We first define the \emph{fences}, i.e., $Q(0.25)-1.5*IQR$ and $Q(0.75)+1.5*IQR$. Then in the modified boxplot, the whiskers do not extend all the way out to the maximum and minimum, but out to the data points that are just inside the fences.  as calculated by the $1.5*IQR$ rule. In the modified boxplots, outliers are typically denoted as points or dots outside the fences For example, consider the continuous measure of depression, variable \R{cesd} in Figure \ref{fig:univ_boxplot_modified}. Here that the upper whisker extends to 25, the maximum value inside $1.5*IQR$. The points above 25 are considered potential outliers. 
+
+
+Additions that make boxplots much more informative are displayed in Figure \ref{fig:univ_boxplot_modified}: 1) adding the mean as a point, 2) adding a violin plot to show the density (reflected around the mid-line of the boxplot), and 3) adding the points directly, but jittered to avoid over-plotting. Violin plots are not commonly used, but they can be very informative in that it can display the shape of the kernel density in the same graph as the boxplot. 
+
+<<univ_boxplot_enhanced>>=
+a <- ggplot(depress, aes(y=age, x=1)) + 
+      geom_boxplot(width=.3) + geom_violin(alpha=.2) +  ylab("Age") + xlab("") + 
+      theme_minimal() + ggtitle("Add a violin plot & the mean") + 
+      theme(axis.ticks = element_blank(), axis.text.x = element_blank()) + 
+      stat_summary(fun.y=mean, geom="point", shape=18, size=4) 
+
+
+b <- ggplot(depress, aes(y=cesd, x=1)) + 
+      geom_boxplot(width=.3) + geom_violin(alpha=.2) +  ylab("CESD") + xlab("") + 
+      theme_minimal() + geom_jitter(alpha=.3, width=.1) + ggtitle("Add a violin plot & jittered points") + 
+      theme(axis.ticks = element_blank(), axis.text.x = element_blank()) 
+
+grid.arrange(a, b, ncol=2)
+@
+
+
+\section{Bivariate}
+Next we move on to introducing graphical methods to explore relationships between two variables. Many of the same plotting types such as boxplots and histograms that were introduced for univariate exploration will be used again here. 
+
+
+\subsection{Categorical v Categorical}
+To compare the distribution of one categorical variable across levels of another categorical variable, primarily tables are created. These come by several names including cross-tabulations, contingency tables and two-way tables. Table \ref{tab:simple_table} displays the frequency table of gender by education status, the values in the cells are the number of records on the data set with that combination of factor levels. There are 4 males with less than a HS degree, and 30 females with some college. 
+
+<<results='asis'>>=
+tab1 <- table(depress$gender, depress$educat)
+xtable(tab1, caption="Two-way frequency table of gender by educational status.", 
+       align='cccccccc', label='tab:simple_table')
+@
+
+When group sizes are not comparable, it is more informative to compare percents instead of frequencies. There are three types of percentages that can be calculated, each one has it's own purpose. Table \ref{tab:prop_table} displays a table of \emph{cell percents}, where the denominator is the entire sample. There are 13.3\% of all respondents in this data set are males who have graduated high school. Table \ref{tab:prop_table_row} displays the \emph{row percents}, where the denominator is the row total. More males than females completed a four year degree: 15.3 \% of males got a BS degree, compared to 14.2\% of females.  Table \ref{tab:prop_table_col} displays the \emph{column percents}, where the denominator is the column total. PhD graduates were majority male; 66.7\% of the PhD graduates were male and 33.3\% female. 
+
+<<results='asis'>>=
+ptab.cc <- prop.table(tab1)
+ptab.cc <- format(round(ptab.cc*100, 1), digits=3)
+
+print(xtable(ptab.cc, caption="Cell percents: Percent out of the entire data set.", 
+             align='cccccccc', label='tab:prop_table'))
+@
+
+<<results='asis'>>=
+ptab.cc <- prop.table(tab1, margin=1)
+ptab.cc <- format(round(ptab.cc*100, 1),digits=3)
+
+xtable(ptab.cc, caption="Row percents: Percent of educational category within each gender.", 
+       align='cccccccc', label='tab:prop_table_row')
+@
+
+<<results='asis'>>=
+ptab.cc <- prop.table(tab1, margin=2)
+ptab.cc <- format(round(ptab.cc*100, 1),digits=3)
+
+xtable(ptab.cc, caption="Column percents: Percent of gender within each educational category.", 
+       align='cccccccc', label='tab:prop_table_col')
+@
+
+\subsubsection*{Bar Charts}
+To visually compare the distribution of one categorical variable within levels of another categorical variable, we return to bar charts. Figures \ref{fig:biv_bar_stacked} and \ref{fig:biv_bar_stacked_pct} compare the distribution of job status within the highest educational level attained using the \R{PARHIV} data set (because it has fewer levels than the educational status variable on the \R{depress} data set). We also use these plots to demonstrate how legend position can be changed from the default position. 
+
+<<biv_bar_stacked, fig.cap='Frequency of current job status within highest education attained.'>>=
+phna <- parhiv %>% select(JOBMO, EDUMO) %>% na.omit()
+pct.cc <- biv.n.col.p(phna, "EDUMO", "JOBMO")
+ggplot(phna, aes(x=EDUMO, fill=JOBMO)) + geom_bar() + theme_bw() + 
+  scale_fill_grey(name="Job Status") + xlab("") + theme(legend.position = "bottom")
+@
+
+<<biv_bar_stacked_pct, fig.cap='Percent of current job status within highest education attained.'>>=
+ggplot(pct.cc, aes(x=EDUMO, fill=JOBMO)) + geom_bar(aes(y=pct), stat='identity') + 
+  scale_fill_grey(name="Job Status") + theme_bw() + xlab("") + ylab("") + 
+  scale_y_continuous(labels=percent) + theme(legend.position = "top")
+@
+
+
+The default for many software programs is a stacked barchart as shown in Figure \ref{fig:biv_bar_stacked} For few categories, or for few comparisons this could be acceptable. However, consider the proportion of those with HS/GED who are unemployed, is it bigger or smaller than the percent of those with post secondary degrees who are currently unemployed? It is difficult to tell in a stacked bar chart, but much easier to see the difference with the bars placed side by side (Figure \ref{fig:biv_bar_side}). 
+
+<<biv_bar_side, fig.cap = 'Side by side bar chart depicting the percent of current job status within highest education attained'>>=
+ggplot(pct.cc, aes(x=EDUMO, y=pct, fill=JOBMO)) + scale_fill_grey(name="Job Status") + 
+  geom_bar(stat="identity", position = "dodge") +  theme_bw() + xlab("") + 
+  scale_y_continuous(labels = percent) + ylab("")
+@
+
+The Cleveland Dot Plot can also be done across groups. Figure \ref{fig:biv_dot_plot} demonstrates a slight variation where the dot is placed at the end of the solid line, instead of on a reference line as in Figure \ref{fig:univ_dotplot}. This is also the first demonstration of \emph{paneling}, where the data for each level of the grouping variable is set apart from the other levels using a rectangular border or frame. This helps to visually separate the groups. 
+
+<<biv_dot_plot, fig.cap="Dot plot demonstrating the frequency of Job status within highest education attained">>=
+ggplot(pct.cc, aes(x=count, y=reorder(JOBMO, count))) + 
+  geom_point(size = 3) + xlab("Frequency") + 
+  facet_grid(EDUMO ~ .) +
+  geom_segment(aes(yend=JOBMO), xend=0, color='grey50') + 
+  ylab("Job Status") + theme_bw() +
+  theme(panel.grid.major.y = element_blank()) 
+@
+
+\subsubsection*{Mosaic Plot}
+ 
+Bar plots and dot plots plot either the row or column percents of a bivariate comparison. They compare the distribution of one categorical variable within levels of a second categorical variable. \emph{Mosaic plots} provide a graphical method to compare the association between two categorical variables. 
+
+Figure \ref{fig:mosaic_plot} compares job status to educational level by visualizing the cell proportions. The width of the boxes correspond to the marginal distribution of educational level, and the height of the boxes correspond to the marginal distribution of job status. The area of each smaller square is proportional to the percent of data with that combination of levels. Using Table \ref{tab:mosaic_data} as a numerical reference, 4\% of responses in the \R{PARHIV} data set have a GED and are employed, whereas 24.7\% have less than a HS education and are currently unemployed. 
+
+<<results='asis'>>=
+xtable(round(prop.table(table(phna$JOBMO, phna$EDUMO))*100,1), align='cccc', 
+       digits=1, label='tab:mosaic_data', 
+       caption = 'Cell percentages for the combination of Educational level and Job Status')
+@
+
+<<mosaic_plot, fig.cap = "Mosiac plot comparing Job status and Educational level", fig.height=3, fig.width=5>>=
+par(oma=c(0,0,0,0), mar=c(2,2,1,0))
+mosaicplot(EDUMO~JOBMO, data=phna, color=TRUE, main="", xlab="Educational Level", ylab="Job Status")
+@
+
+
+\subsection{Continuous v Continuous}
+
+The most common method of visualizing the relationship between two continuous variables is by using a scatterplot (Figure \ref{fig:biv_scatter}). Lines are often added to help see the trend in the data points. The two most common "best fit" straight line (thin solid) and the "lowess" smoother line (thick dashed). 
+
+<<biv_scatter, fig.caption="Scatterplot showing the relationship between Age and CESD from the depression data set">>=
+ggplot(depress, aes(x=age, y=cesd)) + geom_point(size=1) + theme_bw() +  xlab("Age") + ylab("CESD") + 
+  geom_smooth(se=FALSE, method="loess", col="black", aes(linetype="Linear")) + 
+  geom_smooth(method="lm", se=FALSE, col="black", size=2, aes(linetype="Loess"))
+@
+
+\subsubsection*{Line Plots}
+Line plots connect the points with a line. This is typical in time series, or profile plots where the goal is to track the behavior of an individual or population over time. One line is plotted per individual. For data sets with larger number of individuals this can create an unreadable plot, we suggest plotting data on a random subset of individuals instead. 
+
+Figure \ref{fig:profile_plot} uses the \R{mice} data set described in \red{Appendix A} where the weight of mice were measured periodically for about a month. The mice grow almost at the same rate until about 8 days, then they start separating due to individual and treatment characteristics. This particular type of plot is also known as a growth curve, specifically because a measure of growth is plotted over time. We will see this plot again in Section \ref{ch:correlated_sec:longitudinal} when discussing how to analyze longitudinal data. 
+
+<<profile_plot, fig.cap="Weight over Time for 14 Mice">>=
+ggplot(mice, aes(y=WEIGHT, x=DAY, group=ID)) + geom_point() + geom_line() + 
+      theme_minimal() + ylab("Weight (gr)") + xlab("Time (Days)")
+@
+
+
+\subsection{Continuous v. Categorical}
+When comparing the distribution of a continuous variable across levels of a categorical variable, the same types of plots seen above can be used including histograms, density plots, boxplots and violin plots. 
+
+Figure \ref{fig:biv_cont_cat} demonstrates how to plot the distribution within each group side by side (a) , overlaying plots onto the same plotting grid (b), or to create a grid of panels (c) with one group per panel. It is very important to use a shared or common axis when comparing conditional distributions across groups. 
+
+<<biv_cont_cat, fig.cap='Three methods to compare the distribution of a continuous variable (CESD) across levels of a categorical variable (Gender).',  width=10, height=4>>=
+a <- ggplot(depress, aes(y=cesd, x=gender, color=gender)) + scale_color_grey(guide=FALSE)+
+  geom_boxplot(width=.3) + geom_violin(alpha=.2) +  ylab("CESD") + xlab("") + 
+  theme_minimal() + ggtitle("a")+
+  stat_summary(fun.y=mean, geom="point", shape=18, size=4) 
+
+b <- ggplot(depress, aes(x=cesd, color=gender)) + 
+  geom_density() + theme_minimal() + ylab("") + scale_color_grey()+xlab("CESD")+
+  theme(axis.ticks = element_blank(), axis.text.y = element_blank()) + 
+  ggtitle("b") + theme(legend.justification=c(1,1), legend.position=c(1,1))
+
+d <- ggplot(depress, aes(x=cesd, fill=gender)) +  facet_grid(gender ~ .) + xlab("CESD")+
+  geom_histogram() + theme_minimal() + ylab("") + scale_fill_grey(guide=FALSE)+
+  theme(axis.ticks = element_blank(), axis.text.y = element_blank()) + 
+  ggtitle("c") + theme(legend.justification=c(1,1), legend.position=c(1,1))
+
+grid.arrange(a, b,d, ncol=3)
+@
+
+
+\section{Multivariate}
+
+The techniques of applying colors, shadings, positioning and paneling of data from multiple groups to visualize bivariate relationships can be extended to visualize relationships between multiple variables simultaneously.
+
+<<scatter_3d, fig.cap='Scatterplot of CESD as a function of age, with a third variable added using a) color, b) shape, c) size, and d) shading', fig.height=6, fig.width=8>>=
+a <- ggplot(depress, aes(x=age, y=cesd, color=gender)) + scale_color_grey() + 
+      geom_point() +  theme_bw() + xlab("Age") + ylab("CESD") + ggtitle("a) color by gender")
+
+b <- ggplot(depress, aes(x=age, y=cesd, shape=gender)) + geom_point() +  theme_bw() + 
+      xlab("Age") + ylab("CESD") + ggtitle("b) shape by gender")
+
+d <- ggplot(depress, aes(x=age, y=cesd, size=income)) + 
+      geom_point(shape=21) + ggtitle("c) size by income") + 
+      theme_bw() + xlab("Age") + ylab("") + 
+      scale_size_continuous(limits=c(0,70), breaks = seq(0,70,by=10))
+
+e <- ggplot(depress, aes(x=age, y=cesd, fill=income)) + 
+      geom_point(shape=21, size=5) + ggtitle("d) color by income") + 
+      theme_bw() + xlab("Age") + ylab("CESD") + 
+      scale_fill_gradient(low="white", high="black")
+
+grid.arrange(a, b, d, e,  ncol=2, nrow=2)
+
+@
+
+Figure \ref{fig:scatter_3d} demonstrates how a third dimension can be added onto a bivariate scatterplot by changing the a) color or b) shape the points according to the level of a third categorical variable, or change the c) sized or d) fill shade of the points according to a continuous variable. 
+
+There are many other ways to examine a multivariate relationship. Even on each of these plots just discussed a fourth layer could be added, such as changing the size of the point by income and shape of the point by gender. Another method to examine a multivariate relationship is to use paneling in two dimensions. Figure \ref{fig:hist_panel} demonstrates how we can examine the distribution of Overall BSI score for each combination of employment status and highest educational level attained. 
+<<hist_panel, out.width=".9\\textwidth">>=
+ggplot(filter(parhiv, !is.na(EDUMO) & !is.na(JOBMO)), aes(x=bsi_overall)) +  ylab("Frequency") + 
+  geom_histogram()+  facet_grid(EDUMO~JOBMO) + theme_bw() +xlab("Overall BSI score")
+@
+
+A \emph{scatterplot matrix} is a common tool to quickly examine the bivariate relationship between multiple continuous variables simultaneously. Figure \ref{fig:scatter_matrix} demonstrates a publication ready version of a scatterplot matrix that has many features added including the pairwise correlation, univariate histograms and lowess lines on the scatterplots. This single plot lets us identify characteristics of the data such as \R{parent\_bonding} is skewed right, \R{AGESMOKE} and \R{AGEALC} has a high frequency of 0's, there is a moderate positive correlation between \R{AGESMOKE} and \R{AGEALC}, and that none of the three covariates look to be significantly associated with \R{log\_bsi\_overall}. 
+
+<<scatter_matrix, fig.cap="Scatterplot matrix with histograms and density plots along the diagonal, and pairwise correlation values above the diagonal", fig.width=6, fig.height=6>>=
+library(psych)
+c.vars <- parhiv[,c("log_bsi_overall", "parent_bonding", 'AGESMOKE', 'AGEALC')]
+pairs.panels(c.vars, hist.col="grey80", rug=FALSE, cex.cor = .5, ellipses = FALSE)
+@
+
+\newpage
+
+\section{Discussion of computer programs} \label{ch:dataviz_sec:programs}
+All graphics in this chapter were produced in R Version 3.3.1 \red{(cite R)}. The full code and colored versions can be found on the web supplemental files. \red{(this points to UCLA IDRE right?} Table entries with parenthesis are functions within Base R. Entries without parentheses are packages that contain functions (not specifically listed here) that are used to created the selected plot. 
+
+\begin{sidewaystable}[p]
+\begin{center}
+{\footnotesize {\bfseries\caption{Software commands for plotting}}\vspace{.2cm}
+\begin{tabular}{llllll}\hline\\
+             & \multicolumn{1}{c}{Plot Type}  & \multicolumn{1}{c}{R*} & \multicolumn{1}{c}{SAS} & \multicolumn{1}{c}{SPSS} & \multicolumn{1}{c}{STATA} \\
+\hline\\
+\multicolumn{6}{l}{\textbf{\emph{Univariate}}}                                                                                             \\
+
+Categorical  & Table              & table()               & PROC FREQ               & FREQ                     & table, tabulate           \\
+             & Bar Chart          & plot(), ggplot        &                         &                          &                           \\
+             & Dot Plot           & dotchart(), ggplot    &                         &                          &                           \\
+             & Pie Chart          & pie()                 &                         &                          &                           \\
+             & Waffle Chart       & waffle                &                         &                          &                           \\
+Continuous   & Stem-Leaf          & stem()                &                         &                          &                           \\
+             & Histograms         & hist(), ggplot        &                         &                          &                           \\
+             & Kernel Density     & plot(), ggplot        &                         &                          &                           \\
+             & Boxplot            & boxplot(), ggplot     &                         &                          &                           \\
+             & Violin Plots       & ggplot                &                         &                          &                           \\
+\multicolumn{6}{l}{\textbf{\emph{Bivariate}}}                                                                                              \\
+Cat v Cat    & Two-way table      & table                 & PROC FREQ               & CROSS TABS               &                           \\
+             & Bar Chart          & plot(), ggplot        &                         &                          &                           \\
+             & Mosaic Plot        & mosaicplot()          &                         & -                        &                           \\
+Cont v Cont  & Scatterplot        & plot(), ggplot        &                         &                          &                           \\
+             & Line Plot          & plot(), ggplot        &                         &                          &                           \\
+Cont v. cat  & grouping           & plot(), ggplot        &                         &                          &                           \\
+Multivariate & paneling           & ggplot, lattice       &                         &                          &                           \\
+             & colors, size       & plot(), ggplot        &                         &                          &                           \\
+             & scatterplot matrix & psych, lattice, pairs(), car  &                 &                          &                           \\ 
+\hline
+\end{tabular}}
+\end{center}
+\end{sidewaystable}
+
+
+\newpage
+
+\section{What to watch out for}
+
+\begin{itemize}
+\item \textbf{Avoid complexity.} We advise against changing too many features of a graphic at once. It can confuse the reader instead of provide understanding. The purpose of most graphics are to understand distributional patterns, and to identify odd data points. Not all layers provide illumination. For example in Figure \ref{fig:scatter_3d} c; there is much over-plotting in the lower left that it is difficult to see if there is a pattern emerging. In this case coloring the points by the income level may be more helpful than changing the size, albeit barely. 
+\item \textbf{Choose colors mindfully.} All plots in this textbook are shaded using a grayscale, this is a necessary adjustment for black and white printing, but also is a consideration for colorblind readers. We recommend using a colorblind friendly color pallet for publications involving color.  
+\item \textbf{Don't add extra dimensions.} We do not demonstrate plots such as 3D pie charts, or 3D bar charts in this text. In these cases the third dimension is false, it is considered ``chart junk" and can be very misleading. 
+\item \textbf{Be truthful with the scaling.} Be mindful of the scaling of the vertical axis. For example, Figure \ref{fig:univ_bar_pct} plots a percentage on the y-axis with a high value of near 50\%. We scale the y-axis to 100\% here to put the difference in percentages in context of the overall range. A 2\% point difference between categories can appear huge if the y-axis only has a total range of say 5\%. Altering the y-axis to be too large or too small relative to the data is one of the most common ways graphics can be misleading. \
+\item \textbf{Check publishing guidelines.}  If the goal is to publish using graphics be sure to check the rules carefully. Some publications have rules regarding features such as whether or not there is a box completely around the plot versus only showing the x and y axes. 
+\item \textbf{Be consistent with selected themes.} If the first plot has a clear background and a box outlining the edge, all subsequent plots should have that same theme. If a second categorical variable controls the color or shape of the points for one plot, then all subsequent plots that also use that same categorical variable should have the same color and/or shape scheme applied. 
+\item \textbf{Don't over-interpret.} One should not judge statistical significance based on graphs unless they are specifically designed for such. Even if they are (seemingly) designed for it (graphing confidence intervals for group comparisons or 95\% pointwise confidence intervals or confidence bands for graphs) they can produce different and potentially misleading results and interpretations as compared to appropriate hypothesis tests. 
+\end{itemize}
+
+\section{Summary}
+
+Most graphs are exploratory. Also even though the saying ``a picture is worth a thousand words" is true,  and a graph can provide much more information than a block of text or a table full of numbers, when it comes to more than 2 variables, the options for graphically representing the data are limited. A lot can be learned and additionally investigated by specialized analysis methods such as regression analysis in Chapters \ref{ch:slr} and \ref{ch:mlr}. \\
+
+We have demonstrated a wide variety of plots in this chapter. Some plots are more appropriate for a report where there is more page space to write an explanation of the plot, others are better suited for a manuscript. Just as the complexity of an analysis is scaled to be suitable for the audience, it is important to consider any field specific or commonly used plot types. For example, Violin plots are not commonly used, but are close enough to a histogram that sometimes it is reasonable to explain how to read the plot in a manuscript. Pie charts have such a low ink-to-information ratio that it would be better to show a table or write the percentages into the text of a manuscript rather than taking up valuable figure space. \\
+
+There are many other types of graphics that we do not discuss directly such as heatmaps, dendograms, geographic maps. These are typically considered specialized graphics for specific analyses. We present some of these specialized plots in the appropriate chapters of this book but do not attempt to cover all possible ways to display information visually. We recommend looking at Edward Tufte's work as he is a current leader in the data visualization field for more ideas and guidelines to create informative graphics. 
+
+% include the chapter number
+\setlist[enumerate]{label=\thechapter.\arabic{*},resume}
+% restart the enumerate list every chapter
+\preto\chapter{%
+   \restartlist{enumerate}%
+}
+
+\section{Problems}
+\begin{enumerate}
+  \item draw a plot? 
+  \item draw a different plot? 
+  \item This list is auto-numbered with the chapter number included. 
+\end{enumerate}
+
+
+
+\end{document}

@@ -44,7 +44,7 @@ biv.n.col.p <- function(df, row.var, col.var) {
   
 # Load & prepare data
 ```{r}
-data.path <- "data/"
+data.path <- "data6e/"
 
 raw <- read.delim(paste0(data.path,"Parhiv.txt"), sep="\t", header=TRUE)
 
