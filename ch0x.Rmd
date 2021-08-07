@@ -1,0 +1,17 @@
+---
+title: 'Chapter 0x: '
+author: "Robin Donatello"
+date: "_Last update `r Sys.Date()`_"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+  
+---
+
+# Load Libraries
+
+```{r, echo=-2, warning=FALSE, message=FALSE}
+opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+```
+

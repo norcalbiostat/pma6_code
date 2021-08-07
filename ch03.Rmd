@@ -1,0 +1,40 @@
+---
+title: 'Chapter 03: Preparing for Data Analysis '
+author: "Robin Donatello"
+date: "_Last update `r Sys.Date()`_"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+  
+---
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE, cache=TRUE)
+```
+
+# 3.3 Techniques for data entry
+
+**Tab Delimited Text file**
+```{r}
+chem_as_txt <- read.delim("data6e/Chemical.txt", sep="\t")
+head(chem_as_txt)
+```
+
+**Comma delimited text file**
+```{r}
+chem_as_csv <- read.csv("data6e/Chemical.csv")
+head(chem_as_csv)
+```
+
+**Spreadsheet entry**
+```{r}
+library(readxl)
+chem_as_xls <- read_excel("data6e/Chemical.xlsx")
+head(chem_as_xls)
+```
+
+Files from other programming languages such as STATA, SAS and SPSS can be read in using the [haven package](https://haven.tidyverse.org/index.html). 
+
+

@@ -1,7 +1,7 @@
 name: "PMA6"
 output_dir: "."
 navbar:
-  title: "Suppl. Material for PMA6"
+  title: "Supplemental Material for PMA6"
   right: 
   - text: "Contact"
     icon: fa-envelope
