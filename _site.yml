@@ -2,23 +2,6 @@ name: "PMA6"
 output_dir: "."
 navbar:
   title: "Suppl. Material for PMA6"
-  left:
-  - text: "Part I: Preparation for Analysis"
-    menu:
-    - text: "Ch 04: Data visualization"
-      href: ch04.html
-  - text: "Part II: Regression Analysis"
-    menu:
-    - text: "Ch 07: Simple regression and correlation"
-      href: ch07.html
-    - text: "Ch 08: Multiple regression and correlation"
-      href: ch08.html
-    - text: "Ch 09: Variable selection in regression"
-      href: ch09.html
-    - text: "Ch 14: Principal components analysis"
-      href: ch14.html
-    - text: "Ch 16: Cluster analysis"
-      href: ch16.html
   right: 
   - text: "Contact"
     icon: fa-envelope

@@ -6,11 +6,9 @@ output:
 ---
 
 <br> 
-##### This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. 
-
+This site contains data, and selected code for figures and examples found in the 6th edition of [Practical Multivariate Analysis](http://www.crcpress.com/product/isbn/9781138702226) by Afifi, May, Donatello and Clark. _Want to contribute code? Email us or go to our github repo using the links in the top right._ 
 <br> 
 
-_Want to contribute code? Email us or go to our github repo using the links in the top right._ 
 
 
 
@@ -39,23 +37,15 @@ data.frame(data=data, cdbk=cdbk) %>%
 
 ### Code Contribution status as of:  `r format(Sys.Date(), "%b-%d-%Y")`
 
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+code.links <- readxl::read_excel("code_links.xlsx")
 
-| Chapter   | Title                               | R | SAS | SPSS | Stata |
-|:---------:|:------------------------------------|---|-----|------|-------|
-|    3      | Preparing for data analysis         |    |     |      |       |
-|    4      | [Data visualization](ch04.html)|`r emo::ji("check")`   |     |      |       |
-|    5      | Data screening and transformations      |   |     |      |       |
-|    7      | Simple regression and correlation      |   |     |      |       |
-|    8      | Multiple regression and correlation      |   |     |      |       |
-|    9      | Variable selection in regression      |   |     |      |       |
-|   10      | Special regression topics      |   |     |      |       |
-|   11      | Discriminant analysis      |   |     |      |       |
-|   12      | Logistic regression      |   |     |      |       |
-|   13      | Regression analysis with survival data      |   |     |      |       |
-|   14      | Principal components analysis      |   |     |      |       |
-|   15      | Factor analysis      |   |     |      |       |
-|   16      | Cluster analysis      |   |     |      |       |
-|   17      | Log-linear analysis      |   |     |      |       |
-|   18      | Correlated outcomes regression      |   |     |      |       |
+code.links %>%
+   kable(format="html", align='clcccc') %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive" ,"bordered"), 
+                  full_width=TRUE)
+```
+
+
 
 
