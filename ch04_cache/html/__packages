@@ -1,0 +1,12 @@
+base
+scales
+dplyr
+gridExtra
+gridBase
+ggplot2
+xtable
+magrittr
+knitr
+vcd
+psych
+corrplot
